@@ -103,8 +103,9 @@ public class ControlDeStockFrame extends JFrame {
 		comboCategoria.addItem("Elige una Categoría");
 
 		// TODO
+		//Cargar las categorias desde la base de datos
 		var categorias = this.categoriaController.listar();
-		// categorias.forEach(categoria -> comboCategoria.addItem(categoria));
+		categorias.forEach(categoria -> comboCategoria.addItem(categoria.getNombre()));
 
 		textoNombre.setBounds(10, 25, 265, 20);
 		textoDescripcion.setBounds(10, 65, 265, 20);
@@ -239,9 +240,20 @@ public class ControlDeStockFrame extends JFrame {
 			return;
 		}
 		
-		Producto producto = new Producto(textoNombre.getText(),
+		//Nueva validacion para verificar que se haya seleccionado una categoria
+		if(comboCategoria.getSelectedIndex() < 1) {
+			System.out.println(this.comboCategoria.getSelectedIndex());
+			JOptionPane.showMessageDialog(this, "Selecciona una categoria.");
+			return;
+		}
+		
+		
+		Producto producto = new Producto(
+				textoNombre.getText(),
 				textoDescripcion.getText(),
-				cantidadInt);
+				cantidadInt,
+				comboCategoria.getSelectedIndex()
+		);
 
 		this.productoController.guardar(producto);
 

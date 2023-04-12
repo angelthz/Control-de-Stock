@@ -5,6 +5,8 @@ public class Producto {
 	private String nombre;
 	private String descripcion;
 	private Integer cantidad;
+	//Nuevo atributo para almacenar el id de la categoria
+	private Integer idCategoria;
 	
 	public Producto(Integer id, String nombre, String descripcion, Integer cantidad) {
 		this.id = id;
@@ -17,6 +19,14 @@ public class Producto {
 		this.nombre = nombre;
 		this.descripcion = desc;
 		this.cantidad = cantidad;
+	}
+	
+	//Nuevo constructor para incluir el ID de la Categoria
+	public Producto(String nombre, String desc, Integer cantidad, int idCategoria) {
+		this.nombre = nombre;
+		this.descripcion = desc;
+		this.cantidad = cantidad;
+		this.idCategoria = idCategoria;
 	}
 
 	public Integer getId() {
@@ -35,8 +45,15 @@ public class Producto {
 		return this.cantidad;
 	}
 	
+	//Nuevo metodo para obtener el id de la categoria
+	public int getIdCategoria() {
+		return this.idCategoria;
+	}
+	
 	@Override
 	public String toString() {
-		return String.format("{  id: %d,\n   nombre: %s,\n   descripcion: %s,\n   cantidad: %d\n}",this.id, this.nombre, this.descripcion, this.cantidad);
+		return String.format("{  id: %d,\n   nombre: %s,\n   descripcion: %s,\n   cantidad: %d,\n   id_categoria: %d\n}",this.id, this.nombre, this.descripcion, this.cantidad, this.idCategoria);
 	}
+	
+	
 }

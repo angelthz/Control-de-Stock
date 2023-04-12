@@ -117,11 +117,11 @@ public class ProductoDao {
 	 * en la tabla Producto.
 	 */
 	public void guardar(Producto producto) {
-		
+		//se actualizo el Statement para recibir un nuevo parametro, el de la id de la categoria
 		try {
 			final PreparedStatement insertQuery = this.con.prepareStatement("INSERT INTO producto "
-					+ "(nombre, descripcion, cantidad) "
-					+ "values (?, ?, ?)",
+					+ "(nombre, descripcion, cantidad, categoria_id) "
+					+ "values (?, ?, ?, ?)",
 					Statement.RETURN_GENERATED_KEYS);
 			
 			try(insertQuery){
@@ -137,14 +137,18 @@ public class ProductoDao {
 	 * @param prod Objeto de tipo producto a insertar en DB.
 	 * @param stm Statement a ejecutar.
 	 */
-	private void ejecutarInsert(Producto prod, PreparedStatement stm) {
+	private void ejecutarInsert(Producto prod, PreparedStatement query) {
 		try {
-			stm.setString(1, prod.getNombre());
-			stm.setString(2, prod.getDescripcion());
-			stm.setInt(3, prod.getCantidad());
-			stm.execute();
+			//se actualizo la ejecucion de la query para que se envie
+			//el id de la categoria
+			query.setString(1, prod.getNombre());
+			query.setString(2, prod.getDescripcion());
+			query.setInt(3, prod.getCantidad());
+			query.setInt(4, prod.getIdCategoria());
 			
-			ResultSet res = stm.getGeneratedKeys();
+			query.execute();
+			
+			ResultSet res = query.getGeneratedKeys();
 			while(res.next()) {
 				System.out.println("Registro guardado: " +res.getInt(1));
 			}
