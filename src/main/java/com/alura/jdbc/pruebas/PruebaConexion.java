@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.alura.jdbc.connection.ConnectionFactory;
+import com.alura.jdbc.modelo.Producto;
 
 public class PruebaConexion {
 
@@ -80,6 +81,9 @@ public class PruebaConexion {
 			Connection con = conFactory.getConection();
 			System.out.println("Abriendo la conexion: "+(i+1));
 		}*/
+		
+		Producto p = new Producto(1,"Telefono","Huawei",27);
+		System.out.println(p);
     }
 
 }

@@ -20,6 +20,7 @@ import javax.swing.table.DefaultTableModel;
 
 import com.alura.jdbc.controller.CategoriaController;
 import com.alura.jdbc.controller.ProductoController;
+import com.alura.jdbc.modelo.Producto;
 
 public class ControlDeStockFrame extends JFrame {
 
@@ -185,13 +186,15 @@ public class ControlDeStockFrame extends JFrame {
 
 		Optional.ofNullable(modelo.getValueAt(tabla.getSelectedRow(), tabla.getSelectedColumn()))
 				.ifPresentOrElse(fila -> {
-					Integer id = Integer.valueOf((String) modelo.getValueAt(tabla.getSelectedRow(), 0));
+					Integer id = (Integer) modelo.getValueAt(tabla.getSelectedRow(), 0);
 					String nombre = (String) modelo.getValueAt(tabla.getSelectedRow(), 1);
 					String descripcion = (String) modelo.getValueAt(tabla.getSelectedRow(), 2);
-					Integer cantidad = Integer.valueOf((String) modelo.getValueAt(tabla.getSelectedRow(), 0));
-
-					System.out.println(id + " " + nombre + " " + descripcion + " " + cantidad);
-					this.productoController.modificar(id, nombre, descripcion, cantidad);
+					Integer cantidad = (Integer) modelo.getValueAt(tabla.getSelectedRow(), 0);
+					
+					Producto producto = new Producto(id, nombre, descripcion, cantidad);
+					
+					System.out.println(producto);
+					this.productoController.modificar(producto);
 				}, () -> JOptionPane.showMessageDialog(this, "Por favor, elije un item"));
 	}
 
@@ -203,8 +206,7 @@ public class ControlDeStockFrame extends JFrame {
 
 		Optional.ofNullable(modelo.getValueAt(tabla.getSelectedRow(), tabla.getSelectedColumn()))
 				.ifPresentOrElse(fila -> {
-					Integer id = Integer.valueOf((String) modelo.getValueAt(tabla.getSelectedRow(), 0));
-					System.out.println(id);
+					Integer id = (Integer) modelo.getValueAt(tabla.getSelectedRow(), 0);
 					this.productoController.eliminar(id);
 					modelo.removeRow(tabla.getSelectedRow());
 
@@ -214,15 +216,11 @@ public class ControlDeStockFrame extends JFrame {
 
 	private void cargarTabla() {
 		var productos = this.productoController.listar();
-
-		try {
-			// TODO
-			productos.forEach(producto -> modelo.addRow(new Object[] { producto.get("ID"), producto.get("Nombre"),
-					producto.get("Descripcion"), producto.get("Cantidad") }));
-		} catch (Exception e) {
-			throw e;
-		}
-
+		productos.forEach(producto -> modelo.addRow(new Object[] { producto.getId(),
+				producto.getNombre(),
+				producto.getDescripcion(),
+				producto.getCantidad()
+		}));
 	}
 
 	private void guardar() {
@@ -240,15 +238,10 @@ public class ControlDeStockFrame extends JFrame {
 					.format("El campo cantidad debe ser numérico dentro del rango %d y %d.", 0, Integer.MAX_VALUE));
 			return;
 		}
-
-		// TODO
-		// var producto = new Object[] { textoNombre.getText(),
-		// textoDescripcion.getText(), cantidadInt };
-		// var categoria = comboCategoria.getSelectedItem();
-		Map<String, String> producto = new HashMap<>();
-		producto.put("Nombre", textoNombre.getText());
-		producto.put("Descripcion", textoDescripcion.getText());
-		producto.put("Cantidad", cantidadInt.toString());
+		
+		Producto producto = new Producto(textoNombre.getText(),
+				textoDescripcion.getText(),
+				cantidadInt);
 
 		this.productoController.guardar(producto);
 

@@ -13,121 +13,60 @@ import java.util.List;
 import java.util.Map;
 
 import com.alura.jdbc.connection.ConnectionFactory;
+import com.alura.jdbc.dao.ProductoDao;
+import com.alura.jdbc.modelo.Producto;
 
+/**
+ * Esta clase contiene todos los atributos y metodos para implementar la logica de negocio
+ * necesaria ademas de hacer la comunicacion entre las Vistas y los DAO's
+ * @author Angel
+ *
+ */
 public class ProductoController {
-
-	public void modificar(Integer id, String nombre, String descripcion, Integer cantidad) {
-		// CONEXION
-		final Connection con = new ConnectionFactory().getConection();
-
-		try (con) {
-			final PreparedStatement updateQuery = con
-					.prepareStatement("UPDATE producto SET nombre = ?, descripcion = ?, cantidad = ? WHERE id = ?");
-			try (updateQuery) {
-				updateQuery.setString(1, nombre);
-				updateQuery.setString(2, descripcion);
-				updateQuery.setInt(3, cantidad);
-				updateQuery.setInt(4, id);
-				updateQuery.execute();
-			}
-		} catch (SQLException e) {
-			throw new RuntimeException(e);
-		}
+	//Almacena una nueva instancia de tipo ProductoDao
+	private ProductoDao productDAO;
+	
+	/**
+	 * Crea una nueva instancia de Tipo ProductoController, esta instancia almacena una unica
+	 * conexion a la base de datos, por lo que nuevas instancias almacenaran su propia conexion
+	 * a la base de datos y seran independientes entre ellas.
+	 * Esta instancia se encarga de llamar a las operaciones de acceso a la base de datos
+	 * del ProductoDao y podemos implementar nuevas reglas de negocio aqui mismo.
+	 */
+	public ProductoController() {
+		this.productDAO = new ProductoDao(new ConnectionFactory().getConection());
 	}
-
+	
+	/**
+	 * Llama al metodo actualizar del ProductoDao
+	 * @param producto
+	 */
+	public void modificar(Producto producto) {
+		this.productDAO.actualizar(producto);
+	}
+	
+	/**
+	 * Llama al metodo eliminar del ProductoDao
+	 * @param id
+	 */
 	public void eliminar(Integer id) {
-		final Connection con = new ConnectionFactory().getConection();
-
-		try (con) {
-			final PreparedStatement deleteQuery = con.prepareStatement("DELETE FROM producto WHERE id = ?");
-			try (deleteQuery) {
-				deleteQuery.setInt(1, id);
-				deleteQuery.execute();
-			}
-		} catch (SQLException e) {
-			throw new RuntimeException(e);
-		}
+		this.productDAO.eliminar(id);
 	}
-
-	public List<Map<String, String>> listar() {
-		// creamos una conexion
-
-		List<Map<String, String>> resultados = new ArrayList<>();
-
-		final Connection con = new ConnectionFactory().getConection();
-
-		try (con) {
-			final Statement query = con.createStatement();
-			try (query) {
-				query.execute("SELECT *FROM producto");
-
-				ResultSet res = query.getResultSet();
-
-				while (res.next()) {
-					Map<String, String> fila = new HashMap<>();
-					fila.put("ID", String.valueOf(res.getInt("ID")));
-					fila.put("Nombre", res.getString("NOMBRE"));
-					fila.put("Descripcion", res.getString("DESCRIPCION"));
-					fila.put("Cantidad", String.valueOf(res.getInt("CANTIDAD")));
-					resultados.add(fila);
-				}
-			}
-		} catch (SQLException e) {
-			throw new RuntimeException(e);
-		}
-		return resultados;
+	
+	/**
+	 * Llama al metodo listar del ProductoDao
+	 * @return
+	 */
+	public List<Producto> listar() {
+		return this.productDAO.listar();
 	}
-
-	public void guardar(Map<String, String> producto) {
-		String nombre = producto.get("Nombre");
-		String desc = producto.get("Descripcion");
-		Integer cant = Integer.valueOf(producto.get("Cantidad"));
-		int max = 50;
-
-		// obtenemos una conexion
-		final Connection con = new ConnectionFactory().getConection();
-
-		try (con) {
-			// creamos nuestro statement (query)
-			final PreparedStatement insertQuery = con.prepareStatement(
-					"INSERT INTO producto (nombre, descripcion, cantidad) values(?,?,?)",
-					Statement.RETURN_GENERATED_KEYS);
-
-			try (insertQuery) {
-				// deshabilitamos el autocommit desde java
-				con.setAutoCommit(false);
-
-				// insertamos los productos de 50 en 50
-				do {
-					int actual = Math.min(max, cant);
-					insertProducto(nombre, desc, actual, insertQuery);
-					cant -= max;
-				} while (cant > 0);
-
-				// si no ocurre algun error con el inserte hacemos el commit (terminamos la
-				// transaccion)
-				con.commit();
-			} catch (SQLException e) {
-				// si ocurre un error revertimos la consulta
-				con.rollback();
-			}
-		} catch (SQLException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	private void insertProducto(String nombre, String desc, Integer cant, PreparedStatement query) throws SQLException {
-		// hace el insert desde java hacia la base de datos
-		query.setString(1, nombre);
-		query.setString(2, desc);
-		query.setInt(3, cant);
-		// ejecutamos la consulta
-		query.execute();
-		// si se muestra el ID del producto la consulta fue exitosa
-		ResultSet res = query.getGeneratedKeys();
-		while (res.next()) {
-			System.out.println("Se ha insertado con exito, ID: " + res.getInt(1));
-		}
+	
+	/**
+	 * Llama al metodo guardar del ProductoDao
+	 * @param producto
+	 */
+	public void guardar(Producto producto) {
+		this.productDAO.guardar(producto);
 	}
 
 }
