@@ -65,7 +65,7 @@ public class PruebaConexion {
 		}catch(Exception e) {
 			System.out.println("Error: " + e);
 		}*/
-		int max = 50;
+		/*int max = 50;
 		int cant = 120;
 		
 		
@@ -73,7 +73,13 @@ public class PruebaConexion {
 			int actual = Math.min(max, cant);
 			System.out.println(actual);
 			cant -= max;
-		}while(cant>0);
+		}while(cant>0);*/
+		
+		/*ConnectionFactory conFactory = new ConnectionFactory();
+		for(int i=0; i<20; i++) {
+			Connection con = conFactory.getConection();
+			System.out.println("Abriendo la conexion: "+(i+1));
+		}*/
     }
 
 }
