@@ -29,6 +29,12 @@ public class Producto {
 		this.idCategoria = idCategoria;
 	}
 
+	public Producto(int id, String nombre, int cantidad) {
+		this.id = id;
+		this.nombre = nombre;
+		this.cantidad = cantidad;
+	}
+
 	public Integer getId() {
 		return this.id;
 	}
